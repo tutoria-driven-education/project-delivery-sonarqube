@@ -1,0 +1,11 @@
+{
+  "name": "project-delivery",
+  "version": "1.0.0",
+  "main": "index.js",
+  "author": "Alexandre Nunes <alexandrenunes@poli.ufrj.br>",
+  "license": "MIT",
+  "dependencies": {
+    "inquirer": "^8.2.2",
+    "joi": "^17.6.0"
+  }
+}
