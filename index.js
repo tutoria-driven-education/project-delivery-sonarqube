@@ -1,6 +1,7 @@
 const inquirer = require("inquirer");
 const { schemaValidation, schemas } = require("./validation");
 const deliveryProject = require("./delivery");
+const { store, get } = require("./suggestions");
 
 inquirer
   .prompt([
@@ -9,6 +10,7 @@ inquirer
       message: "Qual o nome do projeto que deseja corrigir?",
       name: "projectSlug",
       validate: schemaValidation(schemas.slugSchema),
+      default: get("projectSlug"),
     },
     {
       type: "number",
@@ -25,6 +27,7 @@ inquirer
   ])
   .then(async (answers) => {
     const { projectSlug, studentId, zipUrl } = answers;
+    store("projectSlug", projectSlug);
 
     try {
       console.log("Enviando projeto...");
@@ -49,6 +52,7 @@ inquirer
     }
   })
   .catch((err) => {
+    console.error(err);
     console.error(
       "Erro ao enviar projeto. Verifique os dados ou entre em contato com o suporte."
     );
