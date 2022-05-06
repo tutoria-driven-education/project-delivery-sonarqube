@@ -27,4 +27,17 @@ Consulte seu coordenador para obter a chave de API válida.
 node index.js
 ```
 
+#### Envio em massa
+
+- Caso deseje entregar vários projetos de uma vez rode o comando seguinte para iniciar o servidor:
+
+```bash
+yarn start:server
+```
+
+- Uma vez que o servidor esteja rodando, faça uma requisição POST para a rota `/delivery` de acordo com o local
+que a aplicação estará rodando (localhost:3000).
+
+- O body da aplicação deverá ser um JSON, e seguirá o formato de acordo com o arquivo `projects.json`
+
 Qualquer dúvida, entre em contato pergunte para o time de tecnologia :)

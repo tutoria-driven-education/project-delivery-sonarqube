@@ -1,0 +1,15 @@
+{
+  "projectSlug": "project-slug",
+  "projects": [
+    {
+      "studentId": "student-id",
+      "name": "student-name",
+      "zipUrl": "example.zip"
+    },
+    {
+      "studentId": "student-id",
+      "name": "student-name",
+      "zipUrl": "example.zip"
+    }
+  ]
+}
