@@ -1,6 +1,7 @@
 const express = require('express');
 const { schemaValidation, schemas } = require("./validation");
 const deliveryProject = require("./delivery");
+const axios = require("axios");
 
 const port = 3000
 
@@ -41,6 +42,63 @@ app.post('/delivery', async (req, res) => {
     res.status(400).send({ success: false, message: 'Projects failed to deliver', error })
   }
 })
+
+app.get('/zip-url', async (req, res) => {
+  try {
+    const { repositories } = req.body
+
+    const promises = repositories.map(async (repository) => {
+      const { name, studentId, link } = repository
+
+      if (!link.includes("github.com")) {
+        return { success: false, message: `Link ${link} is not valid` }
+      }
+
+      const repositorySplit = link.split('/')
+      const repositoryName = repositorySplit[repositorySplit.length - 1]
+      const repositoryOwner = repositorySplit[repositorySplit.length - 2]
+
+      const branch = await getBranch(repositoryName, repositoryOwner)
+      const zipUrl = getZipUrlLink(repositoryName, repositoryOwner, branch.data.name)
+
+      return { name, zipUrl, studentId }
+    })
+
+    const branches = await Promise.all(promises)
+
+    res.status(200).send({ success: true, message: 'Branches retrieved successfully', branches: branches })
+  } catch (error) {
+    res.status(400).send({ success: false, message: 'Branches failed to retrieve', error: error?.message })
+  }
+})
+
+async function getBranch(repositoryName, repositoryOwner) {
+  const baseUrl = "https://api.github.com/repos";
+  const path = `/${repositoryOwner}/${repositoryName}/branches`;
+
+  try {
+    const branches = await axios({
+      method: "GET",
+      url: `${baseUrl}${path}`,
+      headers: {
+        "Content-Type": "application/json"
+      },
+    })
+
+    const principalBranch = branches.data[branches.data.length - 1]
+
+    return { success: true, data: principalBranch }
+  } catch (error) {
+    return { success: false, error: error?.message }
+  }
+}
+
+function getZipUrlLink(repositoryName, repositoryOwner, branch) {
+  const baseUrl = "https://github.com";
+  const path = `/${repositoryOwner}/${repositoryName}/archive/refs/heads/${branch}.zip`;
+
+  return `${baseUrl}${path}`
+}
 
 app.listen(port, () => {
   console.log(`Server listening on port ${port}`)
