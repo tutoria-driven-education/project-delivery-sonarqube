@@ -20,24 +20,27 @@ app.post('/delivery', async (req, res) => {
     if (!isValidProjectSlug) {
       res.status(400).send({ message: 'Project slug is not valid!' });
     }
-
-    const promises = projects.map(async (project) => {
+    let responses = []
+    projects.map(async (project,index) => {
+      setTimeout( async () => {
       const { studentId, zipUrl } = project
       const isValidStudentId = schemaValidation(schemas.numericIdSchema)
       const isValidZipUrl = schemaValidation(schemas.zipUrlSchema)
 
       if (isValidStudentId(studentId) && isValidZipUrl(zipUrl)) {
         await deliveryProject(projectSlug, studentId, zipUrl)
-
-        return { success: true, message: `Project ${studentId} delivered successfully` }
+        responses.push({ success: true, message: `Project ${studentId} delivered successfully` })
       }
+      else{
 
-      return { success: false, message: `Project ${studentId} failed to deliver` }
+        responses.push({ success: false, message: `Project ${studentId} failed to deliver` })
+      }
+      
+      if(responses.length === projects.length) return res.status(200).send({ success: true, message: 'Projects delivered successfully', responses })
+      }, index*3000)
     })
 
-    const responses = await Promise.all(promises)
-
-    res.status(200).send({ success: true, message: 'Projects delivered successfully', responses })
+    
   } catch (error) {
     res.status(400).send({ success: false, message: 'Projects failed to deliver', error })
   }

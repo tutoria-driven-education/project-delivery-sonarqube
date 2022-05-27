@@ -24,7 +24,7 @@ Consulte seu coordenador para obter a chave de API válida.
 - Execute a aplicação
 
 ```bash
-node index.js
+make run
 ```
 
 #### Envio em massa
@@ -32,7 +32,7 @@ node index.js
 - Caso deseje entregar vários projetos de uma vez rode o comando seguinte para iniciar o servidor:
 
 ```bash
-yarn start:server
+make server
 ```
 
 - Uma vez que o servidor esteja rodando, faça uma requisição POST para a rota `/delivery` de acordo com o local
